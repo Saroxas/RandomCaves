@@ -12,11 +12,13 @@ namespace RandomCaves
 {
     public partial class FormMain : Form
     {
-        int xArrayDimension = 35;
-        int yArrayDimension = 35;
-        int wallChance = 40;
+        int xArrayDimension = 45;
+        int yArrayDimension = 45;
+        int wallChance = 45;
 
-        int minIteration = 4;
+        int amountOfIterations = 5;
+
+        int minIteration = 3;
         int numWallsWhenWall = 4;
         int numWallsWhenEmpty = 5;
 
@@ -32,6 +34,9 @@ namespace RandomCaves
             numericUpDownMinIteration.Value = minIteration;
             numericUpDownNumWallsWhenWall.Value = numWallsWhenWall;
             numericUpDownNumWallsWhenEmpty.Value = numWallsWhenEmpty;
+            numericUpDownAmountOfIterations.Value = amountOfIterations;
+
+            buttonIterateMap.Text = "Iterate map " + amountOfIterations + " times";
 
             map = new MapGenerator(xArrayDimension, yArrayDimension, wallChance, minIteration, numWallsWhenWall, numWallsWhenEmpty);
 
@@ -42,6 +47,7 @@ namespace RandomCaves
         {
             //generate map
             map = new MapGenerator(xArrayDimension, yArrayDimension, wallChance, minIteration, numWallsWhenWall, numWallsWhenEmpty);
+            labelIterationCount.Text = "Current iteration: " + map.Iteration;
             writeMap();
             //profit
         }
@@ -73,13 +79,18 @@ namespace RandomCaves
 
                 for(int j = 0; j < map.MapHeight; j++)
                 {
+
                     if(placeHolderMap[i, j] == 1)
                     {
                         mapLine += "# ";
                     }
-                    else
+                    if(placeHolderMap[i, j] == 0)
                     {
-                        mapLine += ". ";
+                        mapLine += "  ";
+                    }
+                    if(!(placeHolderMap[i, j] == 0) && !(placeHolderMap[i, j] == 1))
+                    {
+                        mapLine += placeHolderMap[i, j] + " ";
                     }
                     
                 }
@@ -90,10 +101,11 @@ namespace RandomCaves
 
         private void buttonIterateMap_Click(object sender, EventArgs e)
         {
-            for(int i = 0; i < 5; i++)
+            for(int i = 0; i < amountOfIterations; i++)
             {
                 map.MakeCaverns();
                 map.Iteration = map.Iteration + 1;
+                labelIterationCount.Text = "Current iteration: " + map.Iteration;
             }
             
             writeMap();
@@ -112,6 +124,26 @@ namespace RandomCaves
         private void numericUpDownNumWallsWhenEmpty_ValueChanged(object sender, EventArgs e)
         {
             numWallsWhenEmpty = Decimal.ToInt32(numericUpDownNumWallsWhenEmpty.Value);
+        }
+
+        private void numericUpDownAmountOfIterations_ValueChanged(object sender, EventArgs e)
+        {
+            amountOfIterations = Decimal.ToInt32(numericUpDownAmountOfIterations.Value);
+            buttonIterateMap.Text = "Iterate map " + amountOfIterations + " times";
+        }
+
+        private void buttonFrameWalls_Click(object sender, EventArgs e)
+        {
+            int[,] placeHolderMap = map.Map;
+            List<Coord> currentRoom = map.GetRegionTiles(10, 10);
+
+            foreach(Coord tile in currentRoom)
+            {
+                placeHolderMap[tile.tileX, tile.tileY] = 2;
+            }
+            map.Map = placeHolderMap;
+
+            writeMap();
         }
     }
 }

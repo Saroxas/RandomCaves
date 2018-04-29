@@ -18,6 +18,7 @@ namespace RandomCaves
         public int MinIterations { get; set; }
         public int NumWallsWhenWall { get; set; }
         public int NumWallsWhenEmpty { get; set; }
+        public int AmountOfRooms { get; set; }
 
         public MapGenerator(int mapWidth, int mapHeight, int percentAreWalls)
         {
@@ -28,10 +29,10 @@ namespace RandomCaves
             this.MinIterations = 4;
             this.NumWallsWhenWall = 4;
             this.NumWallsWhenEmpty = 5;
+            this.AmountOfRooms = 0;
 
             RandomFillMap();
         }
-
         public MapGenerator(int mapWidth, int mapHeight, int percentAreWalls, int[,] map)
         {
             this.MapWidth = mapWidth;
@@ -43,6 +44,7 @@ namespace RandomCaves
             this.MinIterations = 4;
             this.NumWallsWhenWall = 4;
             this.NumWallsWhenEmpty = 5;
+            this.AmountOfRooms = 0;
         }
         public MapGenerator(int mapWidth, int mapHeight, int percentAreWalls, int minIterations, int numWallsWhenWall, int numWallsWhenEmpty)
         {
@@ -53,6 +55,7 @@ namespace RandomCaves
             this.MinIterations = minIterations;
             this.NumWallsWhenWall = numWallsWhenWall;
             this.NumWallsWhenEmpty = numWallsWhenEmpty;
+            this.AmountOfRooms = 0;
 
             RandomFillMap();
         }
@@ -160,6 +163,7 @@ namespace RandomCaves
             }
             return 0;
         }
+
         public int GetAdjacentWalls(int x, int y, int scopeX, int scopeY)
         {
             int startX = x - scopeX;
@@ -219,6 +223,97 @@ namespace RandomCaves
                 return true;
             }
             return false;
+        }
+
+        public void flipXY(int x, int y)
+        {
+            if (Map[x, y] == 0)
+            {
+                Map[x, y] = 1;
+                return;
+            }
+            if (Map[x, y] == 1)
+            {
+                Map[x, y] = 0;
+                return;
+            }
+            return;
+        }
+        public List<List<Coord>> GetRegions(int tileType)
+        {
+            List<List<Coord>> regions = new List<List<Coord>>();
+            int[,] mapFlags = new int[MapWidth, MapHeight];
+
+            for (int x = 0; x < MapWidth; x++)
+            {
+                for (int y = 0; y < MapHeight; y++)
+                {
+                    if (mapFlags[x, y] == 0 && Map[x, y] == tileType)
+                    {
+                        List<Coord> newRegion = GetRegionTiles(x, y);
+                        regions.Add(newRegion);
+
+                        foreach (Coord tile in newRegion)
+                        {
+                            mapFlags[tile.tileX, tile.tileY] = 1;
+                        }
+                    }
+                }
+            }
+
+            return regions;
+        }
+
+        public List<Coord> GetRegionTiles(int startX, int startY)
+        {
+            List<Coord> tiles = new List<Coord>();
+            int[,] mapFlags = new int[MapWidth, MapHeight];
+            int tileType = Map[startX, startY];
+
+            Queue<Coord> queue = new Queue<Coord>();
+            queue.Enqueue(new Coord(startX, startY));
+            mapFlags[startX, startY] = 1;
+
+            while (queue.Count > 0)
+            {
+                Coord tile = queue.Dequeue();
+                tiles.Add(tile);
+
+                for (int x = tile.tileX - 1; x <= tile.tileX + 1; x++)
+                {
+                    for (int y = tile.tileY - 1; y <= tile.tileY + 1; y++)
+                    {
+                        if (IsInMapRange(x, y) && (y == tile.tileY || x == tile.tileX))
+                        {
+                            if (mapFlags[x, y] == 0 && Map[x, y] == tileType)
+                            {
+                                mapFlags[x, y] = 1;
+                                queue.Enqueue(new Coord(x, y));
+                            }
+                        }
+                    }
+                }
+            }
+
+            return tiles;
+        }
+
+        public bool IsInMapRange(int x, int y)
+        {
+            return x >= 0 && x < MapWidth && y >= 0 && y < MapHeight;
+        }
+
+    }
+
+
+    public struct Coord
+    {
+        public int tileX;
+        public int tileY;
+        public Coord(int x, int y)
+        {
+            tileX = x;
+            tileY = y;
         }
     }
 }

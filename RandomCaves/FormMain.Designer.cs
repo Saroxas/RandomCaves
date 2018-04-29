@@ -44,12 +44,17 @@
             this.labelNumWallsWhenWall = new System.Windows.Forms.Label();
             this.numericUpDownNumWallsWhenEmpty = new System.Windows.Forms.NumericUpDown();
             this.labelNumWallsWhenEmpty = new System.Windows.Forms.Label();
+            this.labelAmountOfIterations = new System.Windows.Forms.Label();
+            this.numericUpDownAmountOfIterations = new System.Windows.Forms.NumericUpDown();
+            this.labelIterationCount = new System.Windows.Forms.Label();
+            this.buttonFrameWalls = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownXLength)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYLength)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWallChance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinIteration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumWallsWhenWall)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumWallsWhenEmpty)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAmountOfIterations)).BeginInit();
             this.SuspendLayout();
             // 
             // richTextBoxMap
@@ -138,10 +143,37 @@
             resources.ApplyResources(this.labelNumWallsWhenEmpty, "labelNumWallsWhenEmpty");
             this.labelNumWallsWhenEmpty.Name = "labelNumWallsWhenEmpty";
             // 
+            // labelAmountOfIterations
+            // 
+            resources.ApplyResources(this.labelAmountOfIterations, "labelAmountOfIterations");
+            this.labelAmountOfIterations.Name = "labelAmountOfIterations";
+            // 
+            // numericUpDownAmountOfIterations
+            // 
+            resources.ApplyResources(this.numericUpDownAmountOfIterations, "numericUpDownAmountOfIterations");
+            this.numericUpDownAmountOfIterations.Name = "numericUpDownAmountOfIterations";
+            this.numericUpDownAmountOfIterations.ValueChanged += new System.EventHandler(this.numericUpDownAmountOfIterations_ValueChanged);
+            // 
+            // labelIterationCount
+            // 
+            resources.ApplyResources(this.labelIterationCount, "labelIterationCount");
+            this.labelIterationCount.Name = "labelIterationCount";
+            // 
+            // buttonFrameWalls
+            // 
+            resources.ApplyResources(this.buttonFrameWalls, "buttonFrameWalls");
+            this.buttonFrameWalls.Name = "buttonFrameWalls";
+            this.buttonFrameWalls.UseVisualStyleBackColor = true;
+            this.buttonFrameWalls.Click += new System.EventHandler(this.buttonFrameWalls_Click);
+            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.buttonFrameWalls);
+            this.Controls.Add(this.labelIterationCount);
+            this.Controls.Add(this.numericUpDownAmountOfIterations);
+            this.Controls.Add(this.labelAmountOfIterations);
             this.Controls.Add(this.numericUpDownNumWallsWhenEmpty);
             this.Controls.Add(this.labelNumWallsWhenEmpty);
             this.Controls.Add(this.numericUpDownNumWallsWhenWall);
@@ -164,6 +196,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinIteration)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumWallsWhenWall)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumWallsWhenEmpty)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAmountOfIterations)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -186,6 +219,10 @@
         private System.Windows.Forms.Label labelNumWallsWhenWall;
         private System.Windows.Forms.NumericUpDown numericUpDownNumWallsWhenEmpty;
         private System.Windows.Forms.Label labelNumWallsWhenEmpty;
+        private System.Windows.Forms.Label labelAmountOfIterations;
+        private System.Windows.Forms.NumericUpDown numericUpDownAmountOfIterations;
+        private System.Windows.Forms.Label labelIterationCount;
+        private System.Windows.Forms.Button buttonFrameWalls;
     }
 }
 
