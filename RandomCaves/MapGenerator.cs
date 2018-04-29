@@ -14,12 +14,20 @@ namespace RandomCaves
         public int MapWidth { get; set; }
         public int MapHeight { get; set; }
         public int PercentAreWalls { get; set; }
+        public int Iteration { get; set; }
+        public int MinIterations { get; set; }
+        public int NumWallsWhenWall { get; set; }
+        public int NumWallsWhenEmpty { get; set; }
 
         public MapGenerator(int mapWidth, int mapHeight, int percentAreWalls)
         {
             this.MapWidth = mapWidth;
             this.MapHeight = mapHeight;
             this.PercentAreWalls = percentAreWalls;
+            this.Iteration = 0;
+            this.MinIterations = 4;
+            this.NumWallsWhenWall = 4;
+            this.NumWallsWhenEmpty = 5;
 
             RandomFillMap();
         }
@@ -31,6 +39,22 @@ namespace RandomCaves
             this.PercentAreWalls = percentAreWalls;
             this.Map = new int[this.MapWidth, this.MapHeight];
             this.Map = map;
+            this.Iteration = 0;
+            this.MinIterations = 4;
+            this.NumWallsWhenWall = 4;
+            this.NumWallsWhenEmpty = 5;
+        }
+        public MapGenerator(int mapWidth, int mapHeight, int percentAreWalls, int minIterations, int numWallsWhenWall, int numWallsWhenEmpty)
+        {
+            this.MapWidth = mapWidth;
+            this.MapHeight = mapHeight;
+            this.PercentAreWalls = percentAreWalls;
+            this.Iteration = 0;
+            this.MinIterations = minIterations;
+            this.NumWallsWhenWall = numWallsWhenWall;
+            this.NumWallsWhenEmpty = numWallsWhenEmpty;
+
+            RandomFillMap();
         }
 
         public void RandomFillMap()
@@ -117,16 +141,19 @@ namespace RandomCaves
 
             if (Map[x, y] == 1)
             {
-                if (numWalls >= 4)
+                if (numWalls >= NumWallsWhenWall)
                 {
                     return 1;
                 }
-                
+                if ((Iteration > MinIterations) && (numWalls < 2))
+                {
+                    return 1;
+                }
 
             }
             else
             {
-                if (numWalls >= 5)
+                if (numWalls >= NumWallsWhenEmpty)
                 {
                     return 1;
                 }

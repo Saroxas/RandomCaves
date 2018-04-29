@@ -16,6 +16,10 @@ namespace RandomCaves
         int yArrayDimension = 35;
         int wallChance = 40;
 
+        int minIteration = 4;
+        int numWallsWhenWall = 4;
+        int numWallsWhenEmpty = 5;
+
         MapGenerator map;
 
 
@@ -25,8 +29,11 @@ namespace RandomCaves
             numericUpDownXLength.Value = xArrayDimension;
             numericUpDownYLength.Value = yArrayDimension;
             numericUpDownWallChance.Value = wallChance;
+            numericUpDownMinIteration.Value = minIteration;
+            numericUpDownNumWallsWhenWall.Value = numWallsWhenWall;
+            numericUpDownNumWallsWhenEmpty.Value = numWallsWhenEmpty;
 
-            map = new MapGenerator(xArrayDimension, yArrayDimension, wallChance);
+            map = new MapGenerator(xArrayDimension, yArrayDimension, wallChance, minIteration, numWallsWhenWall, numWallsWhenEmpty);
 
             writeMap();
         }
@@ -34,7 +41,7 @@ namespace RandomCaves
         private void buttonGenerateNewMap_Click(object sender, EventArgs e)
         {
             //generate map
-            map = new MapGenerator(xArrayDimension, yArrayDimension, wallChance);
+            map = new MapGenerator(xArrayDimension, yArrayDimension, wallChance, minIteration, numWallsWhenWall, numWallsWhenEmpty);
             writeMap();
             //profit
         }
@@ -86,9 +93,25 @@ namespace RandomCaves
             for(int i = 0; i < 5; i++)
             {
                 map.MakeCaverns();
+                map.Iteration = map.Iteration + 1;
             }
             
             writeMap();
+        }
+
+        private void numericUpDownMinIteration_ValueChanged(object sender, EventArgs e)
+        {
+            minIteration = Decimal.ToInt32(numericUpDownMinIteration.Value);
+        }
+
+        private void numericUpDownNumWallsWhenWall_ValueChanged(object sender, EventArgs e)
+        {
+            numWallsWhenWall = Decimal.ToInt32(numericUpDownNumWallsWhenWall.Value);
+        }
+
+        private void numericUpDownNumWallsWhenEmpty_ValueChanged(object sender, EventArgs e)
+        {
+            numWallsWhenEmpty = Decimal.ToInt32(numericUpDownNumWallsWhenEmpty.Value);
         }
     }
 }

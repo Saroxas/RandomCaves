@@ -38,9 +38,18 @@
             this.labelWallChance = new System.Windows.Forms.Label();
             this.numericUpDownWallChance = new System.Windows.Forms.NumericUpDown();
             this.buttonIterateMap = new System.Windows.Forms.Button();
+            this.labelMinIteration = new System.Windows.Forms.Label();
+            this.numericUpDownMinIteration = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownNumWallsWhenWall = new System.Windows.Forms.NumericUpDown();
+            this.labelNumWallsWhenWall = new System.Windows.Forms.Label();
+            this.numericUpDownNumWallsWhenEmpty = new System.Windows.Forms.NumericUpDown();
+            this.labelNumWallsWhenEmpty = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownXLength)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYLength)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWallChance)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinIteration)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumWallsWhenWall)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumWallsWhenEmpty)).BeginInit();
             this.SuspendLayout();
             // 
             // richTextBoxMap
@@ -96,10 +105,49 @@
             this.buttonIterateMap.UseVisualStyleBackColor = true;
             this.buttonIterateMap.Click += new System.EventHandler(this.buttonIterateMap_Click);
             // 
+            // labelMinIteration
+            // 
+            resources.ApplyResources(this.labelMinIteration, "labelMinIteration");
+            this.labelMinIteration.Name = "labelMinIteration";
+            // 
+            // numericUpDownMinIteration
+            // 
+            resources.ApplyResources(this.numericUpDownMinIteration, "numericUpDownMinIteration");
+            this.numericUpDownMinIteration.Name = "numericUpDownMinIteration";
+            this.numericUpDownMinIteration.ValueChanged += new System.EventHandler(this.numericUpDownMinIteration_ValueChanged);
+            // 
+            // numericUpDownNumWallsWhenWall
+            // 
+            resources.ApplyResources(this.numericUpDownNumWallsWhenWall, "numericUpDownNumWallsWhenWall");
+            this.numericUpDownNumWallsWhenWall.Name = "numericUpDownNumWallsWhenWall";
+            this.numericUpDownNumWallsWhenWall.ValueChanged += new System.EventHandler(this.numericUpDownNumWallsWhenWall_ValueChanged);
+            // 
+            // labelNumWallsWhenWall
+            // 
+            resources.ApplyResources(this.labelNumWallsWhenWall, "labelNumWallsWhenWall");
+            this.labelNumWallsWhenWall.Name = "labelNumWallsWhenWall";
+            // 
+            // numericUpDownNumWallsWhenEmpty
+            // 
+            resources.ApplyResources(this.numericUpDownNumWallsWhenEmpty, "numericUpDownNumWallsWhenEmpty");
+            this.numericUpDownNumWallsWhenEmpty.Name = "numericUpDownNumWallsWhenEmpty";
+            this.numericUpDownNumWallsWhenEmpty.ValueChanged += new System.EventHandler(this.numericUpDownNumWallsWhenEmpty_ValueChanged);
+            // 
+            // labelNumWallsWhenEmpty
+            // 
+            resources.ApplyResources(this.labelNumWallsWhenEmpty, "labelNumWallsWhenEmpty");
+            this.labelNumWallsWhenEmpty.Name = "labelNumWallsWhenEmpty";
+            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.numericUpDownNumWallsWhenEmpty);
+            this.Controls.Add(this.labelNumWallsWhenEmpty);
+            this.Controls.Add(this.numericUpDownNumWallsWhenWall);
+            this.Controls.Add(this.labelNumWallsWhenWall);
+            this.Controls.Add(this.numericUpDownMinIteration);
+            this.Controls.Add(this.labelMinIteration);
             this.Controls.Add(this.buttonIterateMap);
             this.Controls.Add(this.numericUpDownWallChance);
             this.Controls.Add(this.labelWallChance);
@@ -113,6 +161,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownXLength)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYLength)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWallChance)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinIteration)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumWallsWhenWall)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumWallsWhenEmpty)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -129,6 +180,12 @@
         private System.Windows.Forms.Label labelWallChance;
         private System.Windows.Forms.NumericUpDown numericUpDownWallChance;
         private System.Windows.Forms.Button buttonIterateMap;
+        private System.Windows.Forms.Label labelMinIteration;
+        private System.Windows.Forms.NumericUpDown numericUpDownMinIteration;
+        private System.Windows.Forms.NumericUpDown numericUpDownNumWallsWhenWall;
+        private System.Windows.Forms.Label labelNumWallsWhenWall;
+        private System.Windows.Forms.NumericUpDown numericUpDownNumWallsWhenEmpty;
+        private System.Windows.Forms.Label labelNumWallsWhenEmpty;
     }
 }
 
