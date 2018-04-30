@@ -20,6 +20,9 @@ namespace RandomCaves
         public int NumWallsWhenEmpty { get; set; }
         public int AmountOfRooms { get; set; }
 
+        public int MinimalRoomSize;
+
+        #region Constructors
         public MapGenerator(int mapWidth, int mapHeight, int percentAreWalls)
         {
             this.MapWidth = mapWidth;
@@ -46,7 +49,7 @@ namespace RandomCaves
             this.NumWallsWhenEmpty = 5;
             this.AmountOfRooms = 0;
         }
-        public MapGenerator(int mapWidth, int mapHeight, int percentAreWalls, int minIterations, int numWallsWhenWall, int numWallsWhenEmpty)
+        public MapGenerator(int mapWidth, int mapHeight, int percentAreWalls, int minIterations, int numWallsWhenWall, int numWallsWhenEmpty, int minimalRoomSize)
         {
             this.MapWidth = mapWidth;
             this.MapHeight = mapHeight;
@@ -56,8 +59,22 @@ namespace RandomCaves
             this.NumWallsWhenWall = numWallsWhenWall;
             this.NumWallsWhenEmpty = numWallsWhenEmpty;
             this.AmountOfRooms = 0;
+            this.MinimalRoomSize = minimalRoomSize;
 
             RandomFillMap();
+        }
+        #endregion
+        
+        #region Mapgeneration and Iteration
+        public void BlankMap()
+        {
+            for (int column = 0, row = 0; row < MapHeight; row++)
+            {
+                for (column = 0; column < MapWidth; column++)
+                {
+                    Map[column, row] = 0;
+                }
+            }
         }
 
         public void RandomFillMap()
@@ -101,26 +118,6 @@ namespace RandomCaves
                             Map[column, row] = RandomPercent(PercentAreWalls);
                         }
                     }
-                }
-            }
-        }
-
-        private int RandomPercent(int percent)
-        {
-            if (percent >= rand.Next(1, 101))
-            {
-                return 1;
-            }
-            return 0;
-        }
-
-        public void BlankMap()
-        {
-            for (int column = 0, row = 0; row < MapHeight; row++)
-            {
-                for (column = 0; column < MapWidth; column++)
-                {
-                    Map[column, row] = 0;
                 }
             }
         }
@@ -212,7 +209,7 @@ namespace RandomCaves
             return false;
         }
 
-        bool IsOutOfBounds(int x, int y)
+        public bool IsOutOfBounds(int x, int y)
         {
             if (x < 0 || y < 0)
             {
@@ -225,23 +222,25 @@ namespace RandomCaves
             return false;
         }
 
-        public void flipXY(int x, int y)
+        public bool IsInMapRange(int x, int y)
         {
-            if (Map[x, y] == 0)
-            {
-                Map[x, y] = 1;
-                return;
-            }
-            if (Map[x, y] == 1)
-            {
-                Map[x, y] = 0;
-                return;
-            }
-            return;
+            return x >= 0 && x < MapWidth && y >= 0 && y < MapHeight;
         }
-        public List<List<Coord>> GetRegions(int tileType)
+
+        private int RandomPercent(int percent)
         {
-            List<List<Coord>> regions = new List<List<Coord>>();
+            if (percent >= rand.Next(1, 101))
+            {
+                return 1;
+            }
+            return 0;
+        }
+        #endregion
+
+        #region Room stuff
+        public List<Room> GetRooms(int tileType)
+        {
+            List<Room> rooms = new List<Room>();
             int[,] mapFlags = new int[MapWidth, MapHeight];
 
             for (int x = 0; x < MapWidth; x++)
@@ -250,10 +249,11 @@ namespace RandomCaves
                 {
                     if (mapFlags[x, y] == 0 && Map[x, y] == tileType)
                     {
-                        List<Coord> newRegion = GetRegionTiles(x, y);
-                        regions.Add(newRegion);
+                        List<Coord> roomTiles = GenerateRoomTiles(x, y);
+                        Room newRoom = new Room(roomTiles, Map);
+                        rooms.Add(newRoom);
 
-                        foreach (Coord tile in newRegion)
+                        foreach (Coord tile in roomTiles)
                         {
                             mapFlags[tile.tileX, tile.tileY] = 1;
                         }
@@ -261,10 +261,10 @@ namespace RandomCaves
                 }
             }
 
-            return regions;
+            return rooms;
         }
 
-        public List<Coord> GetRegionTiles(int startX, int startY)
+        public List<Coord> GenerateRoomTiles(int startX, int startY)
         {
             List<Coord> tiles = new List<Coord>();
             int[,] mapFlags = new int[MapWidth, MapHeight];
@@ -298,10 +298,156 @@ namespace RandomCaves
             return tiles;
         }
 
-        public bool IsInMapRange(int x, int y)
+        public void removeSmallRooms(List<Room> allRooms)
         {
-            return x >= 0 && x < MapWidth && y >= 0 && y < MapHeight;
+            foreach (Room room in allRooms)
+            {
+                if (room.tiles.Count < MinimalRoomSize)
+                {
+                    foreach (Coord tile in room.tiles)
+                    {
+                        Map[tile.tileX, tile.tileY] = 1;
+                    }
+                }
+            }
         }
+
+        public void ConnectClosestRooms(List<Room> allRooms)
+        {
+            int bestDistance = 0;
+            Coord bestTileA = new Coord();
+            Coord bestTileB = new Coord();
+            Room bestRoomA = new Room();
+            Room bestRoomB = new Room();
+            bool possibleConnectionFound = false;
+
+            foreach (Room roomA in allRooms)
+            {
+                possibleConnectionFound = false;
+
+                foreach (Room roomB in allRooms)
+                {
+                    if (roomA.Equals(roomB))
+                    {
+                        continue;
+                    }
+
+                    if (roomA.IsConnected(roomB))
+                    {
+                        possibleConnectionFound = false;
+                        break;
+                    }
+
+                    for (int roomAEdgeIndex = 0; roomAEdgeIndex < roomA.edgeTiles.Count; roomAEdgeIndex++)
+                    {
+                        for (int roomBEdgeIndex = 0; roomBEdgeIndex < roomB.edgeTiles.Count; roomBEdgeIndex++)
+                        {
+
+                            Coord tileA = roomA.edgeTiles[roomAEdgeIndex];
+                            Coord tileB = roomB.edgeTiles[roomBEdgeIndex];
+
+                            int distanceBetweenRooms = (int)(Math.Pow(tileA.tileX - tileB.tileX, 2) + Math.Pow(tileA.tileY - tileB.tileY, 2));
+
+                            if (distanceBetweenRooms < bestDistance || !possibleConnectionFound)
+                            {
+                                bestDistance = distanceBetweenRooms;
+                                possibleConnectionFound = true;
+                                bestTileA = tileA;
+                                bestTileB = tileB;
+                                bestRoomA = roomA;
+                                bestRoomB = roomB;
+                            }
+                        }
+                    }
+                }
+
+                if (possibleConnectionFound)
+                {
+                    CreatePassage(bestRoomA, bestRoomB, bestTileA, bestTileB);
+                }
+
+            }
+        }
+
+        public Room FindClosestTileRoom(List<Room> allRooms, Room roomA)
+        {
+            if(allRooms.Count <= 1)
+            {
+                return roomA;
+            }
+            else
+            {
+                foreach(Room roomB in allRooms)
+                {
+
+                }
+            }
+            return roomA;
+        }
+
+        public void CreatePassage(Room roomA, Room roomB, Coord tileA, Coord tileB)
+        {
+            Room.ConnectRooms(roomA, roomB);
+            Coord excavatorPosition = tileA;
+            int xDistance = tileA.tileX - tileB.tileX;
+            int yDistance = tileA.tileY - tileB.tileY;
+            int xDistanceAbs = Math.Abs(xDistance);
+            int yDistanceAbs = Math.Abs(yDistance);
+
+            //passageSize(?)
+            if((roomA.tiles.Count > 0) || (roomB.tiles.Count > 20))
+            {
+                Map[excavatorPosition.tileX, excavatorPosition.tileY] = 0; //initial excavation because we start from the outer edge (wall) of the room 
+
+                while(excavatorPosition.Equals(tileB) == false)
+                {
+                    if(xDistanceAbs > yDistanceAbs)
+                    {
+                        if(xDistance > 0) //distance is positive so tileB is to the west
+                        {
+                            //destructoid method
+                            excavatorPosition.tileX = excavatorPosition.tileX - 1;
+                            Map[excavatorPosition.tileX, excavatorPosition.tileY] = 0;
+                            xDistance--;
+                            xDistanceAbs--;
+                        }
+                        else //distance is negative so tileB is to the east
+                        {
+                            excavatorPosition.tileX = excavatorPosition.tileX + 1;
+                            Map[excavatorPosition.tileX, excavatorPosition.tileY] = 0;
+                            xDistance++;
+                            xDistanceAbs--;
+                        }
+                    }
+                    else
+                    {
+                        if(yDistance > 0) //distance is positive so tileB is to the north
+                        {
+                            excavatorPosition.tileY = excavatorPosition.tileY - 1;
+                            Map[excavatorPosition.tileX, excavatorPosition.tileY] = 0;
+                            yDistance--;
+                            yDistanceAbs--;
+                        }
+                        else //distance is negative so tileB is to the south
+                        {
+                            excavatorPosition.tileY = excavatorPosition.tileY + 1;
+                            Map[excavatorPosition.tileX, excavatorPosition.tileY] = 0;
+                            yDistance++;
+                            yDistanceAbs--;
+                        }
+                    }
+
+                }
+            }
+            else
+            {
+                //
+            }
+
+        }
+
+        #endregion
+
 
     }
 
